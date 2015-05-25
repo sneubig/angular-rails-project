@@ -13,6 +13,12 @@ angular.module('flapperNews', ['ui.router'])
 
 		$urlRouterProvider.otherwise('home');
 	}
+
+	.state('posts', {
+		url: '/posts/{id}',
+		templateUrl: '/posts.html',
+		controller: 'PostsCtrl'
+	});
 ])
 
 .factory('posts', [function(){
@@ -42,7 +48,11 @@ angular.module('flapperNews', ['ui.router'])
 			$scope.posts.push({
 				title: $scope.title, 
 				link: $scope.link,
-				upvotes: 0
+				upvotes: 0, 
+				comments: [
+					{author: 'Joe', body: 'Cool post!', upcotes: 0},
+					{author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
+				]
 			});
 			$scope.title = '';
 			$scope.link = '';
@@ -52,3 +62,22 @@ angular.module('flapperNews', ['ui.router'])
 			post.upvotes += 1;
 		};
 	}]);
+
+.controller('PostsCtrl', [
+	'$scope', 
+	'$stateParams', 
+	'posts', 
+	function($scope, $stateParams, posts){
+		$scope.post = posts.posts[$stateParams.id];
+	}
+
+	$scope.addComment = function(){
+		if($scope.body === '') { return; }
+		$scope.post.comments.push({
+			body: $scope.body, 
+			author: 'user',
+			upvotes: 0
+		});
+		$scope.body = '';
+	};
+	])
